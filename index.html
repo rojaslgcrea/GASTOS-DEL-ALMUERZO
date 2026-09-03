@@ -710,9 +710,9 @@
 
 <script>
   // ============================================================
-  //  CONFIGURACIÓN
+  //  CONFIGURACIÓN - ¡REEMPLAZA CON TU URL!
   // ============================================================
-  const API_URL = 'https://script.google.com/macros/s/AKfycbxh1CpP92nDFYL-IZmLnMBNvqymD3N2KkE4viI21xtjpMFzZ2NgB3fVqHcbKwJYtg/exec'; // <--- REEMPLAZAR CON TU URL
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwrZfeBN53nRyFBTus4oVkNIO2YOUhPpoZ14QP12yRPgtcGlmbdftxUQ-E5yoeHqNE/exec'; // <--- CAMBIAR
 
   // ============================================================
   //  ELEMENTOS DOM
@@ -796,7 +796,6 @@
   function configurarCamposPorCategoria() {
     const categoria = categoriaSelect.value;
     
-    // Resetear visibilidad y requerimientos
     conceptoRequerido.style.display = 'inline';
     conceptoOpcional.style.display = 'none';
     comensalesRequerido.style.display = 'inline';
@@ -807,10 +806,8 @@
     conceptoInput.className = '';
     comensalesInput.className = '';
     
-    // Configurar según categoría
     switch(categoria) {
       case 'Almuerzo Diario':
-        // Comensales OBLIGATORIO, Concepto OPCIONAL
         comensalesRequerido.style.display = 'inline';
         comensalesOpcional.style.display = 'none';
         conceptoRequerido.style.display = 'none';
@@ -821,7 +818,6 @@
         break;
         
       case 'Fondo de Reserva':
-        // Concepto OPCIONAL, Comensales OCULTO
         conceptoRequerido.style.display = 'none';
         conceptoOpcional.style.display = 'inline';
         comensalesRequerido.style.display = 'none';
@@ -833,7 +829,6 @@
         
       case 'Insumos Extra':
       case 'Otros':
-        // Concepto OBLIGATORIO, Comensales OCULTO
         conceptoRequerido.style.display = 'inline';
         conceptoOpcional.style.display = 'none';
         comensalesRequerido.style.display = 'none';
@@ -847,14 +842,12 @@
         grupoComensales.style.display = 'block';
     }
     
-    // Mostrar/ocultar tipo de movimiento solo para Fondo de Reserva
     if (categoria === 'Fondo de Reserva') {
       grupoTipoMovimiento.style.display = 'block';
       tipoMovimientoSelect.required = true;
     } else {
       grupoTipoMovimiento.style.display = 'none';
       tipoMovimientoSelect.required = false;
-      // Para las demás categorías, el tipo es siempre 'Gasto'
       tipoMovimientoSelect.value = 'Gasto';
     }
   }
@@ -885,7 +878,6 @@
     configurarCamposPorCategoria();
   });
   
-  // Ejecutar configuración inicial
   configurarCamposPorCategoria();
 
   // ============================================================
@@ -964,7 +956,6 @@
     const concepto = conceptoInput.value.trim() || '';
     const comensales = parseInt(comensalesInput.value) || 0;
 
-    // Validaciones específicas por categoría
     let errorMsg = '';
     
     if (!fecha) {
@@ -1109,7 +1100,6 @@
         </div>
       `;
       
-      // Gastos por categoría
       if (Object.keys(gastosPorCategoria).length > 0) {
         html += `<h3 style="margin-top:30px;">📊 Gastos por Categoría</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;">`;
         for (const [cat, monto] of Object.entries(gastosPorCategoria)) {
@@ -1141,7 +1131,6 @@
     cargarHistorico('', '', 'todas');
   });
 
-  // Enter en filtros
   document.querySelectorAll('.filtros input, .filtros select').forEach(el => {
     el.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
@@ -1166,9 +1155,7 @@
       if (celdas.length === 7) {
         const fila = Array.from(celdas).map(celda => {
           let texto = celda.textContent.trim();
-          // Limpiar badges
           texto = texto.replace(/[⬆️⬇️🔄💰📅📂📝👥🆔]/g, '').trim();
-          // Si contiene comas, encerrar entre comillas
           if (texto.includes(',')) {
             texto = `"${texto}"`;
           }
@@ -1202,7 +1189,6 @@
     document.getElementById('modalOverlay').classList.remove('active');
   }
 
-  // Cerrar modal al hacer clic fuera
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
     if (e.target === this) {
       cerrarModal();
@@ -1244,23 +1230,14 @@
   //  INICIALIZACIÓN
   // ============================================================
   (async function init() {
-    // Fecha por defecto en el formulario
     fechaInput.value = obtenerFechaActual();
-    
-    // Filtros por defecto: mes actual
     filtroFechaInicio.value = obtenerInicioMes();
     filtroFechaFin.value = obtenerFechaActual();
 
-    // Configurar campos según categoría inicial
     configurarCamposPorCategoria();
 
-    // Cargar totales
     await actualizarTotales();
-    
-    // Cargar histórico inicial
     await cargarHistorico(filtroFechaInicio.value, filtroFechaFin.value, 'todas');
-    
-    // Cargar estadísticas
     await cargarEstadisticas();
     
     console.log('✅ Aplicación inicializada correctamente');
